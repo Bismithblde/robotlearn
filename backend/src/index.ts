@@ -1,8 +1,10 @@
 import express, { Request, Response, NextFunction } from "express";
 import cors from "cors";
-
+import dotenv from "dotenv";
+import { generateLesson } from "./ai/lessonai";
 // Create an instance of an Express application
 const app = express();
+require("dotenv").config();
 
 // Middleware
 app.use(express.json());
@@ -23,6 +25,13 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
 });
 
 const PORT = process.env.PORT || 3000;
+
+app.post("/api/generate-lesson", async (req: Request, res: Response) => {
+  const { topic, gradeLevel } = req.body;
+  const lesson = await generateLesson(topic, gradeLevel);
+  res.json({ lesson });
+});
+
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
